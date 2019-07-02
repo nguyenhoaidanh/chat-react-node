@@ -8,11 +8,11 @@ export function ListFriend() {
     type: type.APP.GET_LIST_USER_ONLINE
   }
 }
-export function setPersonChatWith(friend,mode) {
+export function openChat(me,isOpenChat) {
   return {
-    type: type.APP.SET_PERSON_CHAT_WITH,
-    friend,
-    mode
+    type: type.APP.OPEN_CHAT,
+    me,
+    isOpenChat
   }
 }
 

@@ -14,13 +14,12 @@ class ListUser extends React.Component {
   
   handleClick=(friend)=>
   { 
-    this.props.appActions.setPersonChatWith(friend,'p2p')
+    this.props.appActions.openChat(friend,true)
   }
   render() {
     //DEBUG
     if (process.env.NODE_ENV === 'development') {
-      console.log('Render: ', 'ListFriend')
-      console.log(this.props.app.friends)
+      console.log('Render: ', this.props.app.friends) 
     }
     return (
       <div className="card mb-sm-3 mb-md-0 contacts_card">

@@ -1,36 +1,81 @@
 const app = require('express')();
-var express=require('express');
+var express = require('express');
 const server = require('http').Server(app);
-const io = require('socket.io')(server); 
-const cors = require('cors'); 
+const io = require('socket.io')(server);
+const cors = require('cors');
 const path = require('path'); 
-app.use('/',express.static('dist'));
+const fileUpload = require('express-fileupload');
+app.use(fileUpload()); 
+app.use('/', express.static('dist'));
 app.set('views', __dirname + '/dist');
-app.set('view engine','ejs'); 
-app.use(cors()); 
+app.use('/upload', express.static(__dirname + '/upload'));
+app.set('view engine', 'ejs');
+app.use(cors());
 let friends = [];
 let msg = []
 io.on('connection', socket => {
-    console.log(socket.id,'some one connect')
-    let friend={id:socket.id,name:socket.id, src:'https://www.freshmorningquotes.com/wp-content/uploads/2015/11/cute-and-beautifull-girls-profile-pictures.jpg'}
-    friends.push(friend);  
+    console.log(socket.id, 'some one connect')
+    let friend = { id: socket.id, name: socket.id, src: 'https://www.freshmorningquotes.com/wp-content/uploads/2015/11/cute-and-beautifull-girls-profile-pictures.jpg' }
+    friends.push(friend);
     socket.on('SEND_TO_FRIEND', (data) => {
-        console.log(socket.id,data)
+        console.log(socket.id, data)
         io.emit('SEND_TO_FRIEND', data);
+    });
+    socket.on('SEND_FILE', (data) => {
+        console.log(data); var file = data.files['0']
+        console.log(fileUpload)
+        // for (var file of data.files) {
+        data.files['0'].mv(__dirname + '/upload/' + file.name, function (err) {
+            if (err) console.log(err);
+            else console.log('File Downloaded!');
+        })
+        // }
+        console.log(socket.id, data)
     });
     socket.on('GET_LIST_USER_ONLINE', () => {
         socket.emit('SET_LIST_USER_ONLINE', friends);
         socket.broadcast.emit('SET_LIST_USER_ONLINE', friends);
     });
-    socket.on('disconnect', () => {
-        friends = friends.filter(data => data.id !== socket.id); 
+    socket.on('SET_NAME', (data) => {
+        for (var x of friends)
+            if (x.id == data.id) x.name = data.name
         socket.broadcast.emit('SET_LIST_USER_ONLINE', friends);
-        console.log(socket.id,' is disconnet')
+    });
+    socket.on('disconnect', () => {
+        friends = friends.filter(data => data.id !== socket.id);
+        socket.broadcast.emit('SET_LIST_USER_ONLINE', friends);
+        console.log(socket.id, ' is disconnet')
     });
 });
-server.listen(8000||process.env.PORT, () => console.log('connected to port 8000!'));
-
+function isArray(value) {
+    return value && typeof value === 'object' && value.constructor === Array;
+}
+server.listen(8000 || process.env.PORT, () => console.log('connected to port 8000!'));
+app.post('/sendFiles', function (req, res) {
+    var files = isArray(req.files.files) ? req.files.files : [req.files.files]
+    var promises = []
+    files.forEach(f => { 
+        var fName = '/upload/' + String(1000000000 * Math.random()) + f.name
+        var pathName = __dirname + '/upload/' + String(1000000000 * Math.random()) + f.name
+        var pm = new Promise((resolve, reject) => {
+            f.mv(pathName, function (err) {
+                if (err) {
+                    res.status(200).send({ err: 1 });
+                    reject(err)
+                }
+                else {
+                    console.log('File ' + fName + ' uploaded!');
+                    resolve(fName)
+                }
+            });
+        });
+        promises.push(pm)
+    })
+    Promise.all(promises).then(values => {
+        res.status(200).send({ err: 0, fileUrls: values });
+    });
+});
 app.get('/', (req, res) => {
     console.log('connected to port 8000!')
-    res.sendFile(path.join(__dirname+'/dist/index.html'));
+    res.sendFile(path.join(__dirname + '/dist/index.html'));
 });
