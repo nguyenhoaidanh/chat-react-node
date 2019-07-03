@@ -1,7 +1,7 @@
 import io from 'socket.io-client';
 import * as type from './redux/actions/action-types' 
 
-const socket = io('http://localhost:8000');
+const socket = io('https://chat-react-node.herokuapp.com');
 const configureSocket = dispatch => {
   socket.on('connect', () => {
     console.log(socket.id, ' socket.io-client connected');
