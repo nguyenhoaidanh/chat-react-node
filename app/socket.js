@@ -15,12 +15,16 @@ const configureSocket = dispatch => {
   socket.on(type.APP.SET_LIST_USER_ONLINE, state => {
     dispatch({ type: type.APP.SET_LIST_USER_ONLINE, friends: state });
   });
+  socket.on(type.APP.SOME_ONE_TYPING, (data) => {
+    dispatch({ type: type.APP.SOME_ONE_TYPING, data });
+  });
   socket.on(type.APP.SEND_TO_FRIEND, state => {
     dispatch({ type: type.APP.ADD_MESSAGE, newMsg: state });
   });
   return socket;
 };
 export const getFriend = () => socket.emit(type.APP.GET_LIST_USER_ONLINE);
+export const someOneTyping = (data) => socket.emit(type.APP.SOME_ONE_TYPING,data);
 export const sendToFriend = data => {
   socket.emit(type.APP.SEND_TO_FRIEND, { ...data, from: socket.id });
 }

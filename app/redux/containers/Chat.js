@@ -4,13 +4,13 @@ import axios from 'axios'
 import dateFormat from 'dateformat'
 import { bindActionCreators } from 'redux'
 import * as appActions from '../actions/app'
-import { sendToFriend, setName } from '../../socket'
+import { sendToFriend, setName, someOneTyping } from '../../socket'
 import archImg from '../../resources/images/ripple.svg'
 const filetitle = { fontSize: '1em', color: 'brown', fontWeight: 'bold', margin: '0px 5px 0px 5px', clear: 'both' }
 const fileicon = { fontSize: 40, color: 'brown', padding: '3px 0px 0px 3px', margin: '0px 0px 0px 3px' }
 const closeicon = { cursor: 'pointer', fontSize: '12px', color: 'red', position: 'absolutely', zIndex: 100, margin: '5px 5px 0px 5px', float: 'right' }
 const usersendfile = { fontWeight: 'bold', float: 'right', borderLeft: '1px solid', padding: '0px 0px 0px 5px', margin: '0px 0px 0px 5px' }
-const filewrap = { display: 'inline-block', backgroundColor: '#e8bf99', float: 'right', border: '1px solid', padding: 0, margin: '0px 10px 10px 3px', borderRadius: '5px' }
+const filewrap = { display: 'inline-block', backgroundColor: '#afedc5', float: 'right', border: '1px solid', padding: 0, margin: '0px 10px 10px 3px', borderRadius: '5px' }
 
 class Chat extends React.Component {
   constructor(props) {
@@ -19,7 +19,7 @@ class Chat extends React.Component {
       me: { src: props.app.me }, isOpenChat: props.app.isOpenChat,
       msg: '', loadFile: false,
       listMsg: [], fileObjects: [], userSendFile: 'Nguyễn Danh',
-      loading: false
+      loading: false, someOneTyping: false
     }
   }
   sendMess = () => {
@@ -38,6 +38,12 @@ class Chat extends React.Component {
   inputChange = (e) => {
     this.setState({ [e.target.name]: e.target.value })
     if (e.target.value == '\n' && e.target.name == 'msg') this.setState({ msg: '' })
+    if (e.target.name == 'msg') {
+      someOneTyping(true)
+      setTimeout(() => {
+       someOneTyping(false)
+      }, 3000);
+    }
   }
   keyPress = (e) => {
     if (e.keyCode == 13) this.sendMess()
@@ -54,7 +60,8 @@ class Chat extends React.Component {
     this.setState({
       me: nextProps.app.me,
       isOpenChat: nextProps.app.isOpenChat,
-      listMsg: nextProps.app.listMsg
+      listMsg: nextProps.app.listMsg,
+      someOneTyping: nextProps.app.someOneTyping
     })
   }
   openFileDialog = () => {
@@ -65,7 +72,6 @@ class Chat extends React.Component {
       return;
     }
     const target = event.target
-    console.log(target.files);
     var fileObjects = []
     var formData = new FormData();
     for (var i = 0; i < target.files.length; i++) {
@@ -101,8 +107,9 @@ class Chat extends React.Component {
     this.setState({ fileObjects: this.state.fileObjects.filter(f => f.name !== name) })
   }
   render() {
-    const { me, isOpenChat, loading, loadFile, msg, listMsg = [], fileObjects, userSendFile } = this.state;
-    if (false)
+    const { me, isOpenChat, loading, loadFile, msg, listMsg = [], fileObjects, userSendFile, someOneTyping } = this.state;
+    console.log(someOneTyping)
+    if (!isOpenChat)
       return (<div className="text-center">
         <h3>Chat nhóm chẳng cần tài khoản</h3>
         <h4>Truyền file giữa các máy tính dễ dàng</h4>
@@ -145,12 +152,10 @@ class Chat extends React.Component {
               mes.from !== me.id ?
                 (<div key={idx} className="d-flex justify-content-start mb-4">
                   <div className="img_cont_msg">
-                    <img src='http://tinyurl.com/yxh7fbng'
+                    <img src='http://tinyurl.com/y4ntxzfw'
                       className="rounded-circle user_img_msg" />
                   </div>
-
                   <div className="msg_cotainer">
-                    <span className="msg_from">{mes.from}</span>
                     {mes.msg}
                     {mes.files.length == 0 ? null : mes.files.length == 1 && mes.files[0].type.includes('image') ?
                       <img class="zoom-img" width="250" src='http://tinyurl.com/y5xofgvu' /> :
@@ -169,7 +174,7 @@ class Chat extends React.Component {
                       <img class="zoom-img" width="250" src='http://tinyurl.com/y5xofgvu' /> :
                       <ul className="list">
                         {mes.files.map((f, i) => (
-                          <li key={i}><a href={f.url} download><i style={{ fontSize: 20 }} className="far fa-file"></i> {'  ' + f.name}</a></li>
+                          <li key={i}><a  href={f.url} download><i style={{ fontSize: 20}} className="far fa-file"></i> {'  ' + f.name}</a></li>
                         ))}
                       </ul>}
                     <span className="msg_time_send">{dateFormat(new Date(mes.time), 'ddd mmm dd yyyy HH:MM:ss')}</span>
@@ -197,6 +202,16 @@ class Chat extends React.Component {
               {loading ? <React.Fragment><p style={{ fontStyle: 'italic', color: 'white' }}
                 className="text-center ml-10" ><img width="40"
                   src={archImg} />Đang tải lên ...</p></React.Fragment> : null}
+              {someOneTyping ?
+                (<React.Fragment><img src='http://tinyurl.com/y4ntxzfw'
+                className="rounded-circle x" />
+                <div className="ticontainer" data-toggle="tooltip" data-placement="right" title="Ai đó đang nhập tin nhắn !">
+                  <div className="tiblock">
+                    <div className="tidot"></div>
+                    <div className="tidot"></div>
+                    <div className="tidot"></div>
+                  </div>
+                </div></React.Fragment>) : null}
             </div>
 
             <div className="input-group">

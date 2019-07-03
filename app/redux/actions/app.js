@@ -10,12 +10,11 @@ export function ListFriend() {
 }
 export function openChat(me,isOpenChat) {
   return {
-    type: type.APP.OPEN_CHAT,
+    type: type.APP.SET_ME,
     me,
     isOpenChat
   }
 }
-
 export function addMess(newMsg) {
   return {
     type: type.APP.ADD_MESSAGE,

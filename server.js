@@ -17,20 +17,11 @@ io.on('connection', socket => {
     console.log(socket.id, 'some one connect')
     let friend = { id: socket.id, name: socket.id, src: 'https://www.freshmorningquotes.com/wp-content/uploads/2015/11/cute-and-beautifull-girls-profile-pictures.jpg' }
     friends.push(friend);
-    socket.on('SEND_TO_FRIEND', (data) => {
-        console.log(socket.id, data)
+    socket.on('SEND_TO_FRIEND', (data) => { 
         io.emit('SEND_TO_FRIEND', data);
     });
-    socket.on('SEND_FILE', (data) => {
-        console.log(data); var file = data.files['0']
-        console.log(fileUpload)
-        // for (var file of data.files) {
-        data.files['0'].mv(__dirname + '/upload/' + file.name, function (err) {
-            if (err) console.log(err);
-            else console.log('File Downloaded!');
-        })
-        // }
-        console.log(socket.id, data)
+    socket.on('SOME_ONE_TYPING', (data) => {
+        socket.broadcast.emit('SOME_ONE_TYPING',data);
     });
     socket.on('GET_LIST_USER_ONLINE', () => {
         socket.emit('SET_LIST_USER_ONLINE', friends);
@@ -63,8 +54,7 @@ app.post('/sendFiles', function (req, res) {
                     res.status(200).send({ err: 1 });
                     reject(err)
                 }
-                else {
-                    console.log('File ' + fName + ' uploaded!');
+                else { 
                     resolve(fName)
                 }
             });

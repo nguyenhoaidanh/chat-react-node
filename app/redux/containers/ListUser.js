@@ -12,10 +12,7 @@ class ListUser extends React.Component {
     getFriend()
   }
   
-  handleClick=(friend)=>
-  { 
-    this.props.appActions.openChat(friend,true)
-  }
+   
   render() {
     //DEBUG
     if (process.env.NODE_ENV === 'development') {
@@ -34,10 +31,10 @@ class ListUser extends React.Component {
         <div className="card-body contacts_body">
           <ul className="contacts">
             {this.props.app.friends.map((e, index) =>
-              (<li key={e.id} onClick={()=>this.handleClick(e)}>
+              (<li key={e.id} >
                 <div className="d-flex bd-highlight">
                   <div className="img_cont">
-                    <img src={e.src}
+                    <img src='http://tinyurl.com/y4ntxzfw'
                       className="rounded-circle user_img" />
                     <span className="online_icon online"></span>
                   </div>
