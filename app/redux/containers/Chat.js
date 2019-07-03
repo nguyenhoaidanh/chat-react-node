@@ -90,7 +90,7 @@ class Chat extends React.Component {
     var { fileObjects, msg } = this.state
     var thas = this
     this.setState({ fileObjects: [] })
-    axios.post('http://localhost:8000/sendFiles', formData)
+    axios.post('https://chat-react-node.herokuapp.com/sendFiles', formData)
       .then(function (response) {
         response.data.fileUrls.forEach((url, i) => {
           fileObjects[i].url = url
