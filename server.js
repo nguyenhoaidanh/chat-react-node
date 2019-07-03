@@ -41,7 +41,7 @@ io.on('connection', socket => {
 function isArray(value) {
     return value && typeof value === 'object' && value.constructor === Array;
 }
-server.listen(8000 || process.env.PORT, () => console.log('connected to port 8000!'));
+server.listen(process.env.PORT || 8000, () => console.log('connected to port 8000!'));
 app.post('/sendFiles', function (req, res) {
     var files = isArray(req.files.files) ? req.files.files : [req.files.files]
     var promises = []
