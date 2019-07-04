@@ -52,9 +52,9 @@ app.post('/sendFiles', function (req, res) {
     var files = isArray(req.files.files) ? req.files.files : [req.files.files]
     var promises = []
     files.forEach(f => {
-        var fName = '/../upload/' + String(1000000000 * Math.random()) + f.name
+        var fName = '/upload/' + String(1000000000 * Math.random()) + f.name
         
-        var pathName = __dirname + fName
+        var pathName = 'https://chat-react-node.herokuapp.com' + fName
         console.log(pathName);
         console.log(__dirname+fName);
         console.log(__dirname+fName);
