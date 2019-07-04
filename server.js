@@ -55,7 +55,7 @@ app.post('/sendFiles', function (req, res) {
        // var fName = '/upload/' + String(1000000000 * Math.random()) + f.name
         var fName = '/upload/'  + f.name
         
-        var pathName =  'https://chat-react-node.herokuapp.com/upload/'+ f.name
+        var pathName =  __dirname+'/upload/'+ f.name
         console.log(pathName);
         console.log(__dirname+fName);
         console.log(__dirname+fName);
