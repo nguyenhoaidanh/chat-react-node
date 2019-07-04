@@ -44,14 +44,17 @@ io.on('connection', socket => {
 function isArray(value) {
     return value && typeof value === 'object' && value.constructor === Array;
 }
-server.listen(process.env.PORT || 8000, () => console.log('connected to port 8000!'));
+server.listen(process.env.PORT || 8000, () =>{
+    console.log('connected to port 8000!');
+    console.log(__dirname);
+} )
 app.post('/sendFiles', function (req, res) {
     var files = isArray(req.files.files) ? req.files.files : [req.files.files]
     var promises = []
     files.forEach(f => {
-        var fName = '/upload/' + String(1000000000 * Math.random()) + f.name
+        var fName = '/../upload/' + String(1000000000 * Math.random()) + f.name
         
-        var pathName = '.' + fName
+        var pathName = __dirname + fName
         console.log(pathName);
         console.log(__dirname+fName);
         console.log(__dirname+fName);
@@ -75,5 +78,6 @@ app.post('/sendFiles', function (req, res) {
 });
 app.get('/', (req, res) => {
     console.log('connected to port 8000!')
+    
     res.sendFile(path.join(__dirname + '/dist/index.html'));
 });
