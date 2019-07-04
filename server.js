@@ -51,10 +51,9 @@ app.post('/sendFiles', function (req, res) {
     var files = isArray(req.files.files) ? req.files.files : [req.files.files]
     var promises = []
     files.forEach(f => {
-        var fName = '/upload/' + f.name
-        var pathName =__dirname+'/upload/'+f.name
+        var fName = '/upload/' + f.name 
         var pm = new Promise((resolve, reject) => {
-            f.mv(pathName, function (err) {
+            f.mv(__dirname+'/upload/'+f.name, function (err) {
                 if (err) {
                     res.status(200).send({ err });
                     reject(err)
