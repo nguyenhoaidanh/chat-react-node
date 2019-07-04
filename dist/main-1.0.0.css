@@ -166,6 +166,7 @@ ul.list li :hover{
 .zoom-img
 {
     display: block;  transition: 2s ;
+    border-radius: 18px;
 }
 .video_cam{
 margin-left: 50px;

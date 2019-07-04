@@ -2,39 +2,30 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import * as appActions from '../actions/app'
-import {getFriend} from '../../socket' 
+import { getFriend } from '../../socket'
 
 class ListUser extends React.Component {
-  constructor(props) {
-    super(props)
-  }
   componentDidMount() {
     getFriend()
   }
-  
-   
   render() {
-    //DEBUG
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Render: ', this.props.app.friends) 
-    }
     return (
       <div className="card mb-sm-3 mb-md-0 contacts_card">
         <div className="card-header">
           <div className="input-group">
-            <input type="text" placeholder="Search..." name="" value={'Your friend online: '+ this.props.app.friends.length} 
-            disabled className="form-control search" />
-            <div className="input-group-prepend"> 
+            <input type="text" placeholder="Search..." name="" value={'Your friend online: ' + this.props.app.friends.length}
+              disabled className="form-control search" />
+            <div className="input-group-prepend">
             </div>
           </div>
         </div>
         <div className="card-body contacts_body">
           <ul className="contacts">
-            {this.props.app.friends.map((e, index) =>
+            {this.props.app.friends.map((e) =>
               (<li key={e.id} >
                 <div className="d-flex bd-highlight">
                   <div className="img_cont">
-                    <img src='http://tinyurl.com/y4ntxzfw'
+                    <img src={e.src}
                       className="rounded-circle user_img" />
                     <span className="online_icon online"></span>
                   </div>

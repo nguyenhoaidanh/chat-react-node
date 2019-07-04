@@ -4,7 +4,7 @@ import axios from 'axios'
 import dateFormat from 'dateformat'
 import { bindActionCreators } from 'redux'
 import * as appActions from '../actions/app'
-import { sendToFriend, setName, someOneTyping } from '../../socket'
+import { sendToFriend, setName, someOneTyping, DOMAIN } from '../../socket'
 import archImg from '../../resources/images/ripple.svg'
 const filetitle = { fontSize: '1em', color: 'brown', fontWeight: 'bold', margin: '0px 5px 0px 5px', clear: 'both' }
 const fileicon = { fontSize: 40, color: 'brown', padding: '3px 0px 0px 3px', margin: '0px 0px 0px 3px' }
@@ -18,18 +18,18 @@ class Chat extends React.Component {
     this.state = {
       me: { src: props.app.me }, isOpenChat: props.app.isOpenChat,
       msg: '', loadFile: false,
-      listMsg: [], fileObjects: [], userSendFile: 'Nguyễn Danh',
+      listMsg: [], fileObjects: [], userSendFile: '',
       loading: false, someOneTyping: false
     }
   }
   sendMess = () => {
-    var { msg, fileObjects, formData } = this.state; console.log(formData);
+    var { msg, fileObjects, formData,me } = this.state;
     if (msg || fileObjects.length > 0) {
       if (fileObjects.length > 0) {
         this.setState({ loading: true })
         this.sendFile(formData)
       } else {
-        const data = { msg, time: new Date(), files: fileObjects }
+        const data = { msg, time: new Date(), files: fileObjects, src: me.src }
         sendToFriend(data)
         this.setState({ msg: '' })
       }
@@ -61,7 +61,8 @@ class Chat extends React.Component {
       me: nextProps.app.me,
       isOpenChat: nextProps.app.isOpenChat,
       listMsg: nextProps.app.listMsg,
-      someOneTyping: nextProps.app.someOneTyping
+      someOneTyping: nextProps.app.someOneTyping,
+      userSendFile: nextProps.app.me.name
     })
   }
   openFileDialog = () => {
@@ -90,11 +91,14 @@ class Chat extends React.Component {
     var { fileObjects, msg } = this.state
     var thas = this
     this.setState({ fileObjects: [] })
-    axios.post('https://chat-react-node.herokuapp.com/sendFiles', formData)
+    axios.post(`${DOMAIN}/sendFiles`, formData)
       .then(function (response) {
         response.data.fileUrls.forEach((url, i) => {
           fileObjects[i].url = url
+          console.log( url );
         });
+        console.log(response.data.fileUrls);
+        
         const data = { msg, time: new Date(), files: fileObjects }
         thas.setState({ loading: false, msg: '' })
         sendToFriend(data)
@@ -158,7 +162,7 @@ class Chat extends React.Component {
                   <div className="msg_cotainer">
                     {mes.msg}
                     {mes.files.length == 0 ? null : mes.files.length == 1 && mes.files[0].type.includes('image') ?
-                      <img class="zoom-img" width="250" src='http://tinyurl.com/y5xofgvu' /> :
+                      <img className="zoom-img" width="250" src={`${DOMAIN}${mes.files[0].url}`} /> :
                       <ul className="list">
                         {mes.files.map((f, i) => (
                           <li key={i}><a href={f.url} download><i style={{ fontSize: 20 }} className="far fa-file"></i> {'  ' + f.name}</a></li>
@@ -171,7 +175,7 @@ class Chat extends React.Component {
                   <div className="msg_cotainer_send">
                     {mes.msg}
                     {mes.files.length == 0 ? null : mes.files.length == 1 && mes.files[0].type.includes('image') ?
-                      <img class="zoom-img" width="250" src='http://tinyurl.com/y5xofgvu' /> :
+                      <img className="zoom-img" width="250" src={`${DOMAIN}${mes.files[0].url}`} /> :
                       <ul className="list">
                         {mes.files.map((f, i) => (
                           <li key={i}><a  href={f.url} download><i style={{ fontSize: 20}} className="far fa-file"></i> {'  ' + f.name}</a></li>
