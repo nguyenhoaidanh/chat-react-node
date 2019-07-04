@@ -51,7 +51,7 @@ app.post('/sendFiles', function (req, res) {
     files.forEach(f => {
         var fName = '/upload/' + String(1000000000 * Math.random()) + f.name
         
-        var pathName = './' + fName
+        var pathName = '.' + fName
         console.log(pathName);
         console.log(__dirname+fName);
         console.log(__dirname+fName);
