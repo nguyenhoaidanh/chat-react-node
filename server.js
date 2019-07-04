@@ -54,7 +54,7 @@ app.post('/sendFiles', function (req, res) {
         var pm = new Promise((resolve, reject) => {
             f.mv(pathName, function (err) {
                 if (err) {
-                    res.status(200).send({ err: 1 });
+                    res.status(200).send({ err  });
                     reject(err)
                 }
                 else {
