@@ -53,7 +53,7 @@ app.post('/sendFiles', function (req, res) {
     files.forEach(f => {
         var fName = '/upload/' + f.name 
         var pm = new Promise((resolve, reject) => {
-            f.mv(__dirname+'/upload/'+f.name, function (err) {
+            f.mv(__dirname+fName, function (err) {
                 if (err) {
                     res.status(200).send({ err });
                     reject(err)

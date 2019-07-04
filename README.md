@@ -5,5 +5,5 @@ chat realtime with reactjs , nodejs
 ### bootstrap
 ### nodejs - expressJS
 ### react-redux
-Send file
+Send text, file, image, download file
 Detect friend online , offline,  typing ...
