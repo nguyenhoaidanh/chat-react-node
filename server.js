@@ -4,10 +4,10 @@ const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const cors = require('cors');
 const path = require('path');
-const fileUpload = require('express-fileupload'); 
+const fileUpload = require('express-fileupload');
 app.use(fileUpload());
-app.use('/upload',express.static(__dirname + '/upload'));
-app.use('/', express.static('dist')); 
+app.use('/upload', express.static(__dirname + '/upload'));
+app.use('/', express.static('dist'));
 app.use(cors());
 let friends = [];
 let srcs = ['http://tinyurl.com/y5xofgvu',
@@ -44,26 +44,19 @@ io.on('connection', socket => {
 function isArray(value) {
     return value && typeof value === 'object' && value.constructor === Array;
 }
-server.listen(process.env.PORT || 8000, () =>{
-    console.log('connected to port 8000!');
-    console.log(__dirname);
-} )
+server.listen(process.env.PORT || 8000, () => {
+    console.log('connected to port 8000!'); 
+})
 app.post('/sendFiles', function (req, res) {
     var files = isArray(req.files.files) ? req.files.files : [req.files.files]
     var promises = []
     files.forEach(f => {
-       // var fName = '/upload/' + String(1000000000 * Math.random()) + f.name
-        var fName = '/upload/'  + f.name
-        
-        var pathName =  __dirname+'/upload/'+ f.name
-        console.log(pathName);
-        console.log(__dirname+fName);
-        console.log(__dirname+fName);
-
+        var fName = '/upload/' + String(1000000000 * Math.random()) + f.name
+        var pathName = __dirname + '/upload/' + f.name
         var pm = new Promise((resolve, reject) => {
             f.mv(pathName, function (err) {
                 if (err) {
-                    res.status(200).send({ err  });
+                    res.status(200).send({ err });
                     reject(err)
                 }
                 else {
@@ -77,8 +70,6 @@ app.post('/sendFiles', function (req, res) {
         res.status(200).send({ err: 0, fileUrls: values });
     });
 });
-app.get('/', (req, res) => {
-    console.log('connected to port 8000!')
-    
+app.get('/', (req, res) => { 
     res.sendFile(path.join(__dirname + '/dist/index.html'));
 });
