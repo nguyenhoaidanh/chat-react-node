@@ -52,7 +52,7 @@ app.post('/sendFiles', function (req, res) {
     var promises = []
     files.forEach(f => {
         var fName = '/upload/' + f.name
-        var pathName = __dirname + fName
+        var pathName =__dirname+'/upload/'+f.name
         var pm = new Promise((resolve, reject) => {
             f.mv(pathName, function (err) {
                 if (err) {
