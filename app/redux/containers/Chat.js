@@ -62,11 +62,8 @@ class Chat extends React.Component {
     }
   }
   componentDidMount() {
-    window.setInterval(function () {
-      var elem = document.getElementById('data');
-      if (elem)
-        elem.scrollTop = elem.scrollHeight;
-    }, 100);
+    var elem = document.getElementById('data');
+    if (elem) elem.scrollTop = elem.scrollHeight;
   }
 
   componentWillReceiveProps(nextProps) {
