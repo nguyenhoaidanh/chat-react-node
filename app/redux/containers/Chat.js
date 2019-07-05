@@ -64,6 +64,7 @@ class Chat extends React.Component {
   componentDidMount() {
     var elem = document.getElementById('data');
     if (elem) elem.scrollTop = elem.scrollHeight;
+    console.log('dssss');
   }
 
   componentWillReceiveProps(nextProps) {
