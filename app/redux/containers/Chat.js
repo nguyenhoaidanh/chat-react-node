@@ -61,9 +61,14 @@ class Chat extends React.Component {
       this.props.appActions.openChat(me, true)
     }
   }
-  componentDidMount() {
-    var elem = document.getElementById('data');
-    if (elem) elem.scrollTop = elem.scrollHeight;
+  componentWillUpdate(nextProps, nextState)  {
+    var i = 0;
+    var t = setInterval(() => {
+      if (i++ == 3) clearInterval(t)
+      var elem = document.getElementById('data');
+      if (elem) elem.scrollTop = elem.scrollHeight;
+    }, 300);
+
   }
 
   componentWillReceiveProps(nextProps) {
@@ -118,7 +123,7 @@ class Chat extends React.Component {
   delFile = (name) => {
     this.setState({ fileObjects: this.state.fileObjects.filter(f => f.name !== name) })
   }
-  render() {
+  render() { 
     const { me, isOpenChat, loading, loadFile, msg, listMsg = [], fileObjects, userSendFile, someOneTyping } = this.state;
     if (!isOpenChat)
       return (<div className="text-center">
