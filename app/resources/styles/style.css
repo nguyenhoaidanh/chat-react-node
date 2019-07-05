@@ -156,7 +156,10 @@ ul.list li :hover{
    text-decoration: none;
    color: blue;
 } 
-
+.y
+{
+    transition: 2s;
+}
 .zoom-img:hover
 {
     width: 100vh;

@@ -23,7 +23,7 @@ class Chat extends React.Component {
     }
   }
   sendMess = () => {
-    var { msg, fileObjects, formData,me } = this.state;
+    var { msg, fileObjects, formData, me } = this.state;
     if (msg || fileObjects.length > 0) {
       if (fileObjects.length > 0) {
         this.setState({ loading: true })
@@ -36,14 +36,19 @@ class Chat extends React.Component {
     }
   }
   inputChange = (e) => {
-    this.setState({ [e.target.name]: e.target.value })
-    if (e.target.value == '\n' && e.target.name == 'msg') this.setState({ msg: '' })
-    if (e.target.name == 'msg') {
+    const { name, value } = e.target;
+    this.setState({ [name]: value })
+    if (value == '\n' && name == 'msg') this.setState({ msg: '' })
+    if (name == 'msg') {
       someOneTyping(true)
       setTimeout(() => {
-       someOneTyping(false)
+        someOneTyping(false)
       }, 3000);
     }
+  }
+  onSubmit = (e) => {
+    e.preventDefault()
+    this.setUsername()
   }
   keyPress = (e) => {
     if (e.keyCode == 13) this.sendMess()
@@ -56,6 +61,14 @@ class Chat extends React.Component {
       this.props.appActions.openChat(me, true)
     }
   }
+  componentDidMount() {
+    window.setInterval(function () {
+      var elem = document.getElementById('data');
+      if (elem)
+        elem.scrollTop = elem.scrollHeight;
+    }, 100);
+  }
+
   componentWillReceiveProps(nextProps) {
     this.setState({
       me: nextProps.app.me,
@@ -95,10 +108,8 @@ class Chat extends React.Component {
       .then(function (response) {
         response.data.fileUrls.forEach((url, i) => {
           fileObjects[i].url = url
-          console.log( url );
         });
-        console.log(response.data.fileUrls);
-        
+
         const data = { msg, time: new Date(), files: fileObjects }
         thas.setState({ loading: false, msg: '' })
         sendToFriend(data)
@@ -112,7 +123,6 @@ class Chat extends React.Component {
   }
   render() {
     const { me, isOpenChat, loading, loadFile, msg, listMsg = [], fileObjects, userSendFile, someOneTyping } = this.state;
-    console.log(someOneTyping)
     if (!isOpenChat)
       return (<div className="text-center">
         <h3>Chat nhóm chẳng cần tài khoản</h3>
@@ -120,7 +130,8 @@ class Chat extends React.Component {
         <h4>Nhập username và chat ngay</h4>
         <div className="row">
           <div className="col-md">
-            <form className="form-inline username-form h-100 justify-content-center align-items-center"  >
+            <form className="form-inline username-form h-100 justify-content-center align-items-center"
+              onSubmit={this.onSubmit} >
               <div className="form-group">
                 <input type="text" name='username' onChange={this.inputChange}
                   className="form-control username-input align-middle" placeholder="Username" />
@@ -151,7 +162,7 @@ class Chat extends React.Component {
             </div>
           </div>
 
-          <div className="card-body msg_card_body">
+          <div className="card-body msg_card_body" id="data">
             {listMsg.map((mes, idx) =>
               mes.from !== me.id ?
                 (<div key={idx} className="d-flex justify-content-start mb-4">
@@ -178,7 +189,7 @@ class Chat extends React.Component {
                       <img className="zoom-img" width="250" src={`${DOMAIN}${mes.files[0].url}`} /> :
                       <ul className="list">
                         {mes.files.map((f, i) => (
-                          <li key={i}><a  href={f.url} download><i style={{ fontSize: 20}} className="far fa-file"></i> {'  ' + f.name}</a></li>
+                          <li key={i}><a href={f.url} download><i style={{ fontSize: 20 }} className="far fa-file"></i> {'  ' + f.name}</a></li>
                         ))}
                       </ul>}
                     <span className="msg_time_send">{dateFormat(new Date(mes.time), 'ddd mmm dd yyyy HH:MM:ss')}</span>
@@ -207,15 +218,15 @@ class Chat extends React.Component {
                 className="text-center ml-10" ><img width="40"
                   src={archImg} />Đang tải lên ...</p></React.Fragment> : null}
               {someOneTyping ?
-                (<React.Fragment><img src='http://tinyurl.com/y4ntxzfw'
-                className="rounded-circle x" />
-                <div className="ticontainer" data-toggle="tooltip" data-placement="right" title="Ai đó đang nhập tin nhắn !">
-                  <div className="tiblock">
-                    <div className="tidot"></div>
-                    <div className="tidot"></div>
-                    <div className="tidot"></div>
-                  </div>
-                </div></React.Fragment>) : null}
+                (<div className="y"><img src='http://tinyurl.com/y4ntxzfw'
+                  className="rounded-circle x" />
+                  <div className="ticontainer" data-toggle="tooltip" data-placement="right" title="Ai đó đang nhập tin nhắn !">
+                    <div className="tiblock">
+                      <div className="tidot"></div>
+                      <div className="tidot"></div>
+                      <div className="tidot"></div>
+                    </div>
+                  </div></div>) : null}
             </div>
 
             <div className="input-group">

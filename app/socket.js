@@ -5,7 +5,6 @@ export const DOMAIN = 'https://chat-react-node.herokuapp.com'
 const socket = io(DOMAIN);
 const configureSocket = dispatch => {
   socket.on('connect', () => {
-    console.log(socket.id, ' socket.io-client connected');
     dispatch({
       type: type.APP.SET_ME, me: {
         id: socket.id,

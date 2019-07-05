@@ -15,10 +15,6 @@ import NotFoundPage from '../../components/NotFoundPage'
 
 class App extends React.Component {
   render() {
-    //DEBUG
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Render: ', 'App')
-    }
     return ( 
         <div> 
           <div className="container-fluid">
