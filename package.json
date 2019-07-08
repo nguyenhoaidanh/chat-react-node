@@ -6,6 +6,17 @@
     "npm": ">=6"
   },
   "scripts": {
+    "start-message": "babel-node tools/startMessage.js",
+    "prestart": "npm-run-all --parallel start-message",
+    "start": "npm-run-all --parallel open:src",
+    "open:src": "babel-node tools/srcServer.js",
+    "open:dist": "babel-node tools/distServer.js",
+    "clean-dist": "npm run remove-dist && mkdir dist",
+    "remove-dist": "rimraf ./dist",
+    "build:production": "npm run clean-dist && babel-node tools/build.js && npm run open:dist",
+    "build:staging": "npm run clean-dist && babel-node tools/buildStaging.js && npm run open:dist",
+    "analyze-bundle": "babel-node ./tools/analyzeBundle.js",
+    "format": "prettier --write --single-quote --no-semi --print-width 160  'app/**/*.js'"
   },
   "author": "MinhNVC",
   "dependencies": {
@@ -13,6 +24,7 @@
     "bootstrap": "^4.3.1",
     "cors": "^2.8.5",
     "dateformat": "^3.0.3",
+    "emoji-mart": "^2.11.1",
     "express": "^4.17.1",
     "express-fileupload": "^1.1.5",
     "http": "^0.0.0",

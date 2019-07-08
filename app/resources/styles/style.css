@@ -9,7 +9,25 @@ body,html{
    background: -webkit-linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
     background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
 }
-
+a.emoji.shown {
+margin: 5px;
+}
+section.emoji-mart{
+    position: absolute;
+    z-index: 100;
+    bottom: 60px;
+    
+}
+.emoji-mart-preview,input#emoji-mart-search-3,button.emoji-mart-search-icon, section[aria-label="Frequently Used"],input#emoji-mart-search-6
+{
+    display: none;
+}
+.msgName
+{
+    color: coral;
+    font-size: 13px;
+    margin-left: 8px;
+}
 .chat{
     margin-top: auto;
     margin-bottom: auto;
@@ -66,12 +84,21 @@ background-color: rgba(0,0,0,0.3) !important;
     color: white !important;
     cursor: pointer;
 }
+.emoji_btn{ 
+    background-color: rgba(0,0,0,0.3) !important;
+        border:0 !important;
+        color: white !important;
+        cursor: pointer;
+    }
 .send_btn{
 border-radius: 0 15px 15px 0 !important;
 background-color: rgba(0,0,0,0.3) !important;
     border:0 !important;
     color: white !important;
     cursor: pointer;
+}
+.send_btn i:hover , .attach_btn i:hover, .emoji_btn i:hover{
+    color: #4cd137;
 }
 .search_btn{
     border-radius: 0 15px 15px 0 !important;
@@ -182,9 +209,9 @@ cursor: pointer;
 margin-right: 20px;
 }
 .msg_cotainer{
-margin-top:20px;
+margin-top:5px;
 margin-bottom: auto;
-margin-left: 10px;
+margin-left: 2px;
 border-radius: 25px;
 background-color: #82ccdd;
 padding: 10px;

@@ -9,7 +9,7 @@ const initialState = {
 export default function app(state = initialState, action) {
   switch (action.type) {
     case type.APP.SET_LIST_USER_ONLINE:
-      return { ...state, friends: action.friends.filter(data=>data.id!=state.me.id) } 
+      return { ...state, friends: action.friends.filter(data=>data.id!=state.me.id)  } 
     case type.APP.ADD_MESSAGE:
       return { ...state, listMsg: [...state.listMsg, action.newMsg] }
       case type.APP.SET_ME:

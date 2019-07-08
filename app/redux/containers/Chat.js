@@ -4,14 +4,16 @@ import axios from 'axios'
 import dateFormat from 'dateformat'
 import { bindActionCreators } from 'redux'
 import * as appActions from '../actions/app'
+import Welcome from '../../components/Welcome'
+import HeaderChat from '../../components/HeaderChat'
+import Typing from '../../components/Typing'
 import { sendToFriend, setName, someOneTyping, DOMAIN } from '../../socket'
+import 'emoji-mart/css/emoji-mart.css'
+import { Picker } from 'emoji-mart'
 import archImg from '../../resources/images/ripple.svg'
-const filetitle = { fontSize: '1em', color: 'brown', fontWeight: 'bold', margin: '0px 5px 0px 5px', clear: 'both' }
-const fileicon = { fontSize: 40, color: 'brown', padding: '3px 0px 0px 3px', margin: '0px 0px 0px 3px' }
-const closeicon = { cursor: 'pointer', fontSize: '12px', color: 'red', position: 'absolutely', zIndex: 100, margin: '5px 5px 0px 5px', float: 'right' }
-const usersendfile = { fontWeight: 'bold', float: 'right', borderLeft: '1px solid', padding: '0px 0px 0px 5px', margin: '0px 0px 0px 5px' }
-const filewrap = { display: 'inline-block', backgroundColor: '#afedc5', float: 'right', border: '1px solid', padding: 0, margin: '0px 10px 10px 3px', borderRadius: '5px' }
-
+import { filetitle, fileicon, closeicon, usersendfile, filewrap, srcs } from './constant'
+import MessageLeft from '../../components/MessageLeft';
+import MessageRight from '../../components/MessageRight'; 
 class Chat extends React.Component {
   constructor(props) {
     super(props)
@@ -19,25 +21,25 @@ class Chat extends React.Component {
       me: { src: props.app.me }, isOpenChat: props.app.isOpenChat,
       msg: '', loadFile: false,
       listMsg: [], fileObjects: [], userSendFile: '',
-      loading: false, someOneTyping: false
+      loading: false, someOneTyping: false, openEmoji: false
     }
   }
   sendMess = () => {
     var { msg, fileObjects, formData, me } = this.state;
     if (msg || fileObjects.length > 0) {
       if (fileObjects.length > 0) {
-        this.setState({ loading: true })
+        this.setState({ loading: true, openEmoji:false })
         this.sendFile(formData)
       } else {
-        const data = { msg, time: new Date(), files: fileObjects, src: me.src }
+        const data = { msg, time: new Date(), files: fileObjects, src: srcs[Math.floor(Math.random() * (5 - 0 + 1) + 0)], name: me.name }
         sendToFriend(data)
-        this.setState({ msg: '' })
+        this.setState({ msg: '', openEmoji:false })
       }
     }
   }
   inputChange = (e) => {
     const { name, value } = e.target;
-    this.setState({ [name]: value })
+    this.setState({ [name]: value, openEmoji: false })
     if (value == '\n' && name == 'msg') this.setState({ msg: '' })
     if (name == 'msg') {
       someOneTyping(true)
@@ -61,7 +63,7 @@ class Chat extends React.Component {
       this.props.appActions.openChat(me, true)
     }
   }
-  componentWillUpdate(nextProps, nextState)  {
+  componentWillUpdate(nextProps, nextState) {
     var i = 0;
     var t = setInterval(() => {
       if (i++ == 3) clearInterval(t)
@@ -70,7 +72,6 @@ class Chat extends React.Component {
     }, 300);
 
   }
-
   componentWillReceiveProps(nextProps) {
     this.setState({
       me: nextProps.app.me,
@@ -100,19 +101,18 @@ class Chat extends React.Component {
       const ext = name.substring(lastDot + 1);
       fileObjects.push({ name: fileName + '.' + ext.toUpperCase(), url: '#', type: file.type })
     }
-    this.setState({ formData, fileObjects: Array.from(new Set([...this.state.fileObjects, ...fileObjects])), loadFile: true })
+    this.setState({ formData,   openEmoji:false,fileObjects: Array.from(new Set([...this.state.fileObjects, ...fileObjects])), loadFile: true })
   }
   sendFile = (formData) => {
-    var { fileObjects, msg } = this.state
+    var { fileObjects, msg, me } = this.state
     var thas = this
-    this.setState({ fileObjects: [] })
+    this.setState({ fileObjects: [], openEmoji:false })
     axios.post(`${DOMAIN}/sendFiles`, formData)
       .then(function (response) {
         response.data.fileUrls.forEach((url, i) => {
           fileObjects[i].url = url
         });
-
-        const data = { msg, time: new Date(), files: fileObjects }
+        const data = { msg, time: new Date(), files: fileObjects, src: srcs[Math.floor(Math.random() * (5 - 0 + 1) + 0)], name: me.name }
         thas.setState({ loading: false, msg: '' })
         sendToFriend(data)
       })
@@ -123,84 +123,34 @@ class Chat extends React.Component {
   delFile = (name) => {
     this.setState({ fileObjects: this.state.fileObjects.filter(f => f.name !== name) })
   }
-  render() { 
-    const { me, isOpenChat, loading, loadFile, msg, listMsg = [], fileObjects, userSendFile, someOneTyping } = this.state;
+  onEmojiClick = (e) => {
+    const { msg } = this.state;
+    this.setState({ msg: msg + e.native })
+  }
+  toggleEmoji=(value) => {
+    const {openEmoji} = this.state;
+    if(value !== undefined)
+    this.setState({ openEmoji: value })
+    else this.setState({ openEmoji: ! openEmoji})
+  }
+  render() {
+    const { me, isOpenChat, loading, loadFile, msg, listMsg = [],
+      fileObjects, openEmoji, userSendFile, someOneTyping } = this.state;
     if (!isOpenChat)
-      return (<div className="text-center">
-        <h3>Chat nhóm chẳng cần tài khoản</h3>
-        <h4>Truyền file giữa các máy tính dễ dàng</h4>
-        <h4>Nhập username và chat ngay</h4>
-        <div className="row">
-          <div className="col-md">
-            <form className="form-inline username-form h-100 justify-content-center align-items-center"
-              onSubmit={this.onSubmit} >
-              <div className="form-group">
-                <input type="text" name='username' onChange={this.inputChange}
-                  className="form-control username-input align-middle" placeholder="Username" />
-                <input type="button" onClick={this.setUsername}
-                  className="btn btn-success text-center align-middle" value="Chat ngay" />
-              </div>
-              <div className="form-group">
-              </div>
-            </form>
-          </div>
-        </div>
-        <img src='https://static.xx.fbcdn.net/rsrc.php/v3/yi/r/OBaVg52wtTZ.png' />
-      </div >)
+      return <Welcome inputChange={this.inputChange} 
+      setUsername={this.setUsername} onSubmit={this.onSubmit} />
     else
       return (
         <div className="card" >
-          <div className="card-header msg_head">
-            <div className="d-flex bd-highlight">
-              <div className="img_cont">
-                <img src={me.src}
-                  className="rounded-circle user_img" />
-                <span className="online_icon"></span>
-              </div>
-              <div className="user_info">
-                <span>{'Your name: ' + me.name} </span>
-                <p>{this.props.app.listMsg.length} Messages</p>
-              </div>
-            </div>
-          </div>
-
+          <HeaderChat name={me.name} src={me.src} length={this.props.app.listMsg.length} />
           <div className="card-body msg_card_body" id="data">
             {listMsg.map((mes, idx) =>
               mes.from !== me.id ?
-                (<div key={idx} className="d-flex justify-content-start mb-4">
-                  <div className="img_cont_msg">
-                    <img src='http://tinyurl.com/y4ntxzfw'
-                      className="rounded-circle user_img_msg" />
-                  </div>
-                  <div className="msg_cotainer">
-                    {mes.msg}
-                    {mes.files.length == 0 ? null : mes.files.length == 1 && mes.files[0].type.includes('image') ?
-                      <img className="zoom-img" width="250" src={`${DOMAIN}${mes.files[0].url}`} /> :
-                      <ul className="list">
-                        {mes.files.map((f, i) => (
-                          <li key={i}><a href={f.url} download><i style={{ fontSize: 20 }} className="far fa-file"></i> {'  ' + f.name}</a></li>
-                        ))}
-                      </ul>}
-                    <span className="msg_time">{dateFormat(new Date(mes.time), 'ddd mmm dd yyyy HH:MM:ss')}</span>
-                  </div>
-                </div>) :
-                (<div key={idx} className="d-flex justify-content-end mb-4">
-                  <div className="msg_cotainer_send">
-                    {mes.msg}
-                    {mes.files.length == 0 ? null : mes.files.length == 1 && mes.files[0].type.includes('image') ?
-                      <img className="zoom-img" width="250" src={`${DOMAIN}${mes.files[0].url}`} /> :
-                      <ul className="list">
-                        {mes.files.map((f, i) => (
-                          <li key={i}><a href={f.url} download><i style={{ fontSize: 20 }} className="far fa-file"></i> {'  ' + f.name}</a></li>
-                        ))}
-                      </ul>}
-                    <span className="msg_time_send">{dateFormat(new Date(mes.time), 'ddd mmm dd yyyy HH:MM:ss')}</span>
-                  </div>
-                  <div className="img_cont_msg">
-                    <img src={me.src} className="rounded-circle user_img_msg" />
-                  </div>
-                </div>))}
+                <MessageLeft key={idx} mes={mes} /> :
+                <MessageRight key={idx} mes={mes} me={me} />)
+            }
           </div>
+
           <div className="card-footer">
             <div style={{ maxHeight: 60, overflowY: 'auto', whiteSpace: 'nowrap' }}>
               {loadFile ?
@@ -219,16 +169,7 @@ class Chat extends React.Component {
               {loading ? <React.Fragment><p style={{ fontStyle: 'italic', color: 'white' }}
                 className="text-center ml-10" ><img width="40"
                   src={archImg} />Đang tải lên ...</p></React.Fragment> : null}
-              {someOneTyping ?
-                (<div className="y"><img src='http://tinyurl.com/y4ntxzfw'
-                  className="rounded-circle x" />
-                  <div className="ticontainer" data-toggle="tooltip" data-placement="right" title="Ai đó đang nhập tin nhắn !">
-                    <div className="tiblock">
-                      <div className="tidot"></div>
-                      <div className="tidot"></div>
-                      <div className="tidot"></div>
-                    </div>
-                  </div></div>) : null}
+              {someOneTyping ? <Typing /> : null}
             </div>
 
             <div className="input-group">
@@ -236,15 +177,23 @@ class Chat extends React.Component {
                 <span className="input-group-text attach_btn" onClick={this.openFileDialog}
                 ><i className="fas fa-paperclip"></i></span>
                 <input id="siofu_input" type="file" name="name" multiple onChange={this.getFileInput} style={{ display: 'none' }} />
+
+                <span onClick={() => this.setState({ openEmoji: !openEmoji })} className="input-group-text emoji_btn"
+                ><i className="fas fa-smile"></i></span>
+                {openEmoji ? <div><Picker onSelect={this.onEmojiClick} /></div> : null}
+
               </div>
               <textarea name="msg" value={msg} className="form-control type_msg"
+                onFocus={() => this.setState({ openEmoji: false })}
                 onChange={this.inputChange} onKeyDown={this.keyPress}
                 placeholder="Type your message...">
               </textarea>
+
               <div className="input-group-append">
                 <span className="input-group-text send_btn" onClick={this.sendMess}><i className="fas fa-location-arrow"></i></span>
               </div>
             </div>
+                 
           </div>
         </div>
       )
