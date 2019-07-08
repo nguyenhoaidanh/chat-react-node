@@ -13,9 +13,9 @@ import ListUser from './ListUser'
 
 class App extends React.Component {
   componentDidMount() {
-    // window.onbeforeunload = function (event) { 
-    //   return ("Toàn bộ tin nhắn sẽ bị xóa hoàn toàn khỏi hệ thống, bạn muốn thoát chứ?");
-    // };
+    window.onbeforeunload = function (event) { 
+      return ("Toàn bộ tin nhắn sẽ bị xóa hoàn toàn khỏi hệ thống, bạn muốn thoát chứ?");
+    };
   } 
   render() {
     return (

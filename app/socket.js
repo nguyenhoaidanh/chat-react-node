@@ -1,7 +1,7 @@
 import io from 'socket.io-client';
 import * as type from './redux/actions/action-types'
-//export const DOMAIN = 'https://chat-react-node.herokuapp.com'
-export const DOMAIN = 'http://localhost:8000'
+export const DOMAIN = 'https://chat-react-node.herokuapp.com'
+//export const DOMAIN = 'http://localhost:8000'
 const socket = io(DOMAIN);
 const configureSocket = dispatch => {
   socket.on('connect', () => {
