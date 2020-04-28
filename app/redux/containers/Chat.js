@@ -62,7 +62,8 @@ class Chat extends React.Component {
     if (value == '\n' && name == 'msg') this.setState({msg: ''});
     if (name == 'msg') {
       someOneTyping(true);
-      setTimeout(() => {
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
         someOneTyping(false);
       }, 3000);
     }
