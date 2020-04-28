@@ -10,7 +10,8 @@
     "open:src": "babel-node tools/srcServer.js",
     "clean-dist": "npm run remove-dist && mkdir dist",
     "remove-dist": "rimraf ./dist",
-    "build": "npm run clean-dist && babel-node tools/build.js"
+    "build": "npm run clean-dist && babel-node tools/build.js",
+    "heroku-postbuild": "echo Skip build on Heroku"
   },
   "author": "danh",
   "dependencies": {
