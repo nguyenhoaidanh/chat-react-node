@@ -48,7 +48,6 @@ class Chat extends React.Component {
           msg,
           time: new Date(),
           files: fileObjects,
-          src: srcs[Math.floor(Math.random() * srcs.length)],
           name: me.name
         };
         sendToFriend(data);
@@ -59,13 +58,8 @@ class Chat extends React.Component {
   inputChange = e => {
     const {name, value} = e.target;
     this.setState({[name]: value, openEmoji: false});
-    if (value == '\n' && name == 'msg') this.setState({msg: ''});
-    if (name == 'msg') {
-      someOneTyping(true);
-      clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => {
-        someOneTyping(false);
-      }, 3000);
+    if (value == '\n' && name == 'msg') {
+      this.setState({msg: ''});
     }
   };
   onSubmit = e => {
@@ -73,7 +67,16 @@ class Chat extends React.Component {
     this.setUsername();
   };
   keyPress = e => {
-    if (e.keyCode == 13) this.sendMess();
+    if (e.keyCode == 13) {
+      this.sendMess();
+      someOneTyping(false);
+    } else {
+      someOneTyping(true);
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        someOneTyping(false);
+      }, 2000);
+    }
   };
   setUsername = () => {
     if (this.state.username) {
@@ -160,10 +163,9 @@ class Chat extends React.Component {
           msg,
           time: new Date(),
           files: fileObjects,
-          src: srcs[Math.floor(Math.random() * srcs.length)],
           name: me.name
         };
-        thas.setState({loading: false, msg: ''});
+        thas.setState({loading: false, msg: '', percent: 0});
         sendToFriend(data);
       })
       .catch(function(error) {

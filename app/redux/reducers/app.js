@@ -1,5 +1,6 @@
 import * as type from '../actions/action-types';
 import {srcs} from '../../constants/constant';
+window.mapAvatar = {};
 const initialState = {
   me: {},
   friends: [],
@@ -13,10 +14,11 @@ export default function app(state = initialState, action) {
       let friends = action.friends.filter(data => data.id != state.me.id);
       return {
         ...state,
-        friends: friends.map(e => ({
-          ...e,
-          src: srcs[Math.floor(Math.random() * srcs.length)]
-        }))
+        friends: friends.map(e => {
+          const src = srcs[Math.floor(Math.random() * srcs.length)];
+          window.mapAvatar[e.id] = src;
+          return {...e, src};
+        })
       };
     case type.APP.ADD_MESSAGE:
       return {...state, listMsg: [...state.listMsg, action.newMsg]};

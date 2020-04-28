@@ -8,7 +8,7 @@ class MessageLeft extends React.Component {
       <div className="d-flex justify-content-start mb-4">
         <div className="img_cont_msg">
           <img
-            src={mes.src}
+            src={window.mapAvatar[mes.from]}
             data-toggle="tooltip"
             title={mes.name}
             className="rounded-circle user_img_msg"

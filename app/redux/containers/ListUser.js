@@ -25,7 +25,10 @@ class ListUser extends React.Component {
                 <li key={e.id}>
                   <div className="d-flex bd-highlight">
                     <div className="img_cont">
-                      <img src={e.src} className="rounded-circle user_img" />
+                      <img
+                        src={window.mapAvatar[e.id]}
+                        className="rounded-circle user_img"
+                      />
                       <span className="online_icon online"></span>
                     </div>
                     <div className="user_info">
